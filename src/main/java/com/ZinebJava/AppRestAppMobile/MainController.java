@@ -3,6 +3,8 @@ package com.ZinebJava.AppRestAppMobile;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ZinebJava.AppRestAppMobile.data.Depense;
 import com.ZinebJava.AppRestAppMobile.data.Dette;
+import com.ZinebJava.AppRestAppMobile.model.DepenseModel;
 import com.ZinebJava.AppRestAppMobile.model.DepenseRepositrory;
 import com.ZinebJava.AppRestAppMobile.model.DetteRepository;
 
@@ -30,7 +33,7 @@ public class MainController {
 	private DetteRepository detteRepository;
 	// Pour les dépenses
 	 @PostMapping(path="/depense/add") 
-	  public @ResponseBody String addNewDepense (@RequestParam String libele,@RequestParam float montant,
+	/*  public @ResponseBody String addNewDepense (@RequestParam String libele,@RequestParam float montant,
 			  @RequestParam String note,@RequestParam String date) {
 
 		  Depense n = new Depense();
@@ -40,8 +43,18 @@ public class MainController {
 	    n.setDate(date);
 	    depenseRepository.save(n);
 	    return "Saved";
-	  }
+	  }*/
 
+	  public @ResponseBody String addNewDepense (@RequestBody DepenseModel model ) {
+
+		  Depense n = new Depense();
+	    n.setLibele(model.getLibele());
+	    n.setMontant(model.getMontant());
+	    n.setNote(model.getNote());
+	    n.setDate(model.getDate());
+	    depenseRepository.save(n);
+	    return "Saved";
+	 }
 	  @GetMapping(value = "/depense/{id}")
 	  @ResponseBody
 	  public Optional<Depense> GetDepenseById(@PathVariable int id){
@@ -50,7 +63,7 @@ public class MainController {
 
 
 	  
-	  @GetMapping(path="/depenses")
+	  @GetMapping(path="/depense")
 	  public @ResponseBody Iterable<Depense> getAllDepense() {
 	    
 	    return depenseRepository.findAll();
@@ -79,20 +92,20 @@ public class MainController {
 
 	  
 	  @DeleteMapping("/depense/{id}")
-	  void deleteDepense(@PathVariable int id) {
+	  ResponseEntity deleteDepense(@PathVariable int id) {
 		  depenseRepository.deleteById(id);
+		  return new ResponseEntity(HttpStatus.NO_CONTENT);
 	  }
 // Pour les dettes
 
 	 @PostMapping(path="/dette/add") 
-		  public @ResponseBody String addNewDette (@RequestParam String personne,@RequestParam String delai, @RequestParam float montant,
-				  @RequestParam String note) {
+		  public @ResponseBody String addNewDette (@RequestBody Dette newDette) {
 
 			  Dette n = new Dette();
-		    n.setPersonne(personne);
-		    n.setDelai(delai);
-		    n.setMontant(montant);
-		    n.setNote(note);
+		    n.setPersonne(newDette.getPersonne());
+		    n.setDelai(newDette.getDelai());
+		    n.setMontant(newDette.getMontant());
+		    n.setNote(newDette.getNote());
 		    detteRepository.save(n);
 		    return "Saved";
 		  }
@@ -105,7 +118,7 @@ public class MainController {
 
 
 		  
-		  @GetMapping(path="/dettes")
+		  @GetMapping(path="/dette")
 		  public @ResponseBody Iterable<Dette> getAllDette() {
 		    
 		    return detteRepository.findAll();
