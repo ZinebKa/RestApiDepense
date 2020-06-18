@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,10 +21,12 @@ import com.ZinebJava.AppRestAppMobile.model.DepenseRepositrory;
 import com.ZinebJava.AppRestAppMobile.model.DetteRepository;
 
 @Controller 
-@RequestMapping(path="/api") 
+@RequestMapping(path="/api")
+@CrossOrigin(origins = "*",allowedHeaders = "*")
 public class MainController {
 	@Autowired
 	private DepenseRepositrory depenseRepository;
+	@Autowired
 	private DetteRepository detteRepository;
 	// Pour les dépenses
 	 @PostMapping(path="/depense/add") 
@@ -81,7 +84,7 @@ public class MainController {
 	  }
 // Pour les dettes
 
-		 @PostMapping(path="/dette/add") 
+	 @PostMapping(path="/dette/add") 
 		  public @ResponseBody String addNewDette (@RequestParam String personne,@RequestParam String delai, @RequestParam float montant,
 				  @RequestParam String note) {
 
@@ -107,12 +110,8 @@ public class MainController {
 		    
 		    return detteRepository.findAll();
 		  }
-		 
-		 
-
-
-
-		@PutMapping("/dette/{id}")
+		  
+		 		@PutMapping("/dette/{id}")
 		Dette replaceDette(@RequestBody Dette newDette, @PathVariable int id) {
 
 		  return detteRepository.findById(id).map(x -> {
